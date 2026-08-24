@@ -1,9 +1,9 @@
 (defsystem "protobuf-backend-cl-protobufs"
   :version "0.1.0"
-  :description "cl-protobufs backend for protobuf-protocol"
+  :description "egao1980/cl-protobufs backend for protobuf-protocol"
   :author "egao1980"
   :license "MIT"
-  :depends-on ("protobuf-protocol")
+  :depends-on ("protobuf-protocol" "cl-protobufs" "uiop")
   :serial t
   :pathname "src"
   :components ((:file "package")
@@ -15,6 +15,7 @@
   :pathname "tests"
   :serial t
   :components ((:file "package")
+               (:file "ping-schema")
                (:file "backend-test"))
   :perform (test-op (o c)
              (unless (symbol-call :rove :run c)
