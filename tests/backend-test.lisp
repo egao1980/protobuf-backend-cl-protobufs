@@ -8,12 +8,6 @@
   (ok (typep protobuf-protocol:*protobuf-backend*
              'protobuf-backend-cl-protobufs:cl-protobufs-backend)))
 
-#+win32
-(deftest windows-encode-unimplemented
-  (ok (signals (protobuf-protocol:encode-to-octets nil)
-               'protobuf-protocol:protobuf-error)))
-
-#-win32
 (deftest encode-decode-roundtrip
   (let* ((msg (google:make-string-value :value "hello"))
          (octets (protobuf-protocol:encode-to-octets msg))
@@ -22,7 +16,6 @@
     (ok (plusp (length octets)))
     (ok (equal "hello" (google:string-value.value back)))))
 
-#-win32
 (deftest empty-message
   (let* ((msg (google:make-string-value))
          (octets (protobuf-protocol:encode-to-octets msg))
@@ -30,7 +23,6 @@
     (ok (zerop (length octets)))
     (ok (equal "" (or (google:string-value.value back) "")))))
 
-#-win32
 (deftest serdes-octets
   ;; serdes 0.2.0 encode-to-octets UTF-8s the payload; use encode/decode
   ;; (octets) until 0.2.1 pass-through is published.
@@ -47,7 +39,6 @@
   (ok (signals (protobuf-protocol:load-schema "foo.proto")
                'protobuf-protocol:protobuf-schema-error)))
 
-#-win32
 (deftest encode-to-stream-roundtrip
   (uiop:with-temporary-file (:pathname path :prefix "pb-live-")
     (let ((msg (google:make-string-value :value "file")))

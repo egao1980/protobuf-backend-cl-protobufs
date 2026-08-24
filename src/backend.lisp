@@ -16,24 +16,6 @@
     (symbol message-class)
     (class (class-name message-class))))
 
-#+win32
-(defun %windows-no-overlay ()
-  (error 'protobuf-protocol:protobuf-error
-         :message "cl-protobufs has no windows overlay (generated WKT + protoc)"))
-
-#+win32
-(defmethod protobuf-protocol:backend-encode-message ((backend cl-protobufs-backend)
-                                                     message &key stream)
-  (declare (ignore message stream))
-  (%windows-no-overlay))
-
-#+win32
-(defmethod protobuf-protocol:backend-decode-message ((backend cl-protobufs-backend)
-                                                     source message-class &key)
-  (declare (ignore source message-class))
-  (%windows-no-overlay))
-
-#-win32
 (defmethod protobuf-protocol:backend-encode-message ((backend cl-protobufs-backend)
                                                      message &key stream)
   (handler-case
@@ -47,7 +29,6 @@
       (error 'protobuf-protocol:protobuf-encode-error
              :message (format nil "~A" e)))))
 
-#-win32
 (defmethod protobuf-protocol:backend-decode-message ((backend cl-protobufs-backend)
                                                      source message-class &key)
   (let ((type (%message-type message-class)))
