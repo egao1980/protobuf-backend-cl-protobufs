@@ -46,7 +46,7 @@
 (%muffle
  (lambda ()
    (cl-repo:ensure-systems "cl-protobufs"
-     :version (or (uiop:getenv "CL_PROTOBUFS_VERSION") "2.0-rc1")
+     :version (or (uiop:getenv "CL_PROTOBUFS_VERSION") "2.0-rc2")
      :default-source :oci)
    (cl-repo:ensure-systems '("serdes-protocol" "rove") :default-source :oci)
    (cl-repo:ensure-system-dependencies "protobuf-backend-cl-protobufs"

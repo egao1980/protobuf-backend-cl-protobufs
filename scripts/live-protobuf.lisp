@@ -26,7 +26,7 @@
   (funcall fn))
 
 (defun %cl-protobufs-version ()
-  (or (uiop:getenv "CL_PROTOBUFS_VERSION") "2.0-rc1"))
+  (or (uiop:getenv "CL_PROTOBUFS_VERSION") "2.0-rc2"))
 
 (defun %sut-dirs ()
   (list (merge-pathnames "protobuf-backend-cl-protobufs/" (%workspace))
