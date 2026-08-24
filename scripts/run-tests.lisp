@@ -1,11 +1,10 @@
-;;;; Dogfood egao1980/cl-protobufs backend + serdes :protobuf.
-;;;; Deps via cl-repo (OCI overlay). Local SUT + unpublished protobuf-protocol only.
-;;;;   sbcl --load scripts/live-protobuf.lisp
+;;;; Local Rove via cl-repo (OCI cl-protobufs overlay).
+;;;;   sbcl --load scripts/run-tests.lisp
 
 (setf *debugger-hook*
       (lambda (c h)
         (declare (ignore h))
-        (format *error-output* "~&live-protobuf failed: ~a~%" c)
+        (format *error-output* "~&run-tests failed: ~a~%" c)
         (uiop:quit 1)))
 
 (defun %here ()
@@ -25,14 +24,13 @@
   #-sbcl
   (funcall fn))
 
-(defun %cl-protobufs-version ()
-  (or (uiop:getenv "CL_PROTOBUFS_VERSION") "2.0-rc1"))
-
 (defun %sut-dirs ()
   (list (merge-pathnames "protobuf-backend-cl-protobufs/" (%workspace))
         (merge-pathnames "protobuf-protocol/" (%workspace))))
 
 (defun %bind-consumer-asdf ()
+  "OCI systems-root + local SUTs. Drop workspace inherit so git cl-protobufs
+   (needs protoc) cannot shadow the GHCR overlay."
   (asdf:initialize-source-registry
    `(:source-registry
      (:tree ,(namestring
@@ -48,33 +46,14 @@
 (%muffle
  (lambda ()
    (cl-repo:ensure-systems "cl-protobufs"
-     :version (%cl-protobufs-version)
+     :version (or (uiop:getenv "CL_PROTOBUFS_VERSION") "2.0-rc1")
      :default-source :oci)
-   (cl-repo:ensure-systems "serdes-protocol" :default-source :oci)
+   (cl-repo:ensure-systems '("serdes-protocol" "rove") :default-source :oci)
    (cl-repo:ensure-system-dependencies "protobuf-backend-cl-protobufs"
-     :also-tests nil
+     :also-tests t
      :default-source :oci)))
 (%bind-consumer-asdf)
 (cl-repository-client/asdf-integration:load-system-init-files)
-(%muffle (lambda () (asdf:load-system "protobuf-backend-cl-protobufs")))
-
-(defun fail (fmt &rest args)
-  (apply #'format *error-output* (concatenate 'string "~&FAIL: " fmt "~%") args)
-  (uiop:quit 1))
-
-(let* ((msg (cl-protobufs.google.protobuf:make-string-value :value "ok"))
-       (octets (protobuf-protocol:encode-to-octets msg))
-       (back (protobuf-protocol:decode-octets
-              octets 'cl-protobufs.google.protobuf:string-value)))
-  (unless (equal "ok" (cl-protobufs.google.protobuf:string-value.value back))
-    (fail "roundtrip payload"))
-  (let ((protobuf-protocol:*protobuf-message-class*
-          'cl-protobufs.google.protobuf:string-value))
-    (unless (equal "ok" (cl-protobufs.google.protobuf:string-value.value
-                         (serdes-protocol:decode
-                          (serdes-protocol:encode msg :format :protobuf)
-                          :format :protobuf)))
-      (fail "serdes :protobuf"))))
-
-(format t "~&; protobuf-backend-cl-protobufs live ok~%")
+(%muffle (lambda () (asdf:test-system "protobuf-backend-cl-protobufs")))
+(format t "~&; protobuf-backend-cl-protobufs tests ok~%")
 (uiop:quit 0)

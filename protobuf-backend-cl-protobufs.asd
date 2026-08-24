@@ -15,7 +15,6 @@
   :pathname "tests"
   :serial t
   :components ((:file "package")
-               (:file "ping-schema")
                (:file "backend-test"))
   :perform (test-op (o c)
              (unless (symbol-call :rove :run c)

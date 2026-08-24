@@ -9,27 +9,29 @@
              'protobuf-backend-cl-protobufs:cl-protobufs-backend)))
 
 (deftest encode-decode-roundtrip
-  (let* ((msg (make-ping :payload "hello"))
+  (let* ((msg (google:make-string-value :value "hello"))
          (octets (protobuf-protocol:encode-to-octets msg))
-         (back (protobuf-protocol:decode-octets octets 'ping)))
+         (back (protobuf-protocol:decode-octets octets 'google:string-value)))
     (ok (typep octets '(vector (unsigned-byte 8))))
     (ok (plusp (length octets)))
-    (ok (equal "hello" (ping.payload back)))))
+    (ok (equal "hello" (google:string-value.value back)))))
 
 (deftest empty-message
-  (let* ((msg (make-ping))
+  (let* ((msg (google:make-string-value))
          (octets (protobuf-protocol:encode-to-octets msg))
-         (back (protobuf-protocol:decode-octets octets 'ping)))
+         (back (protobuf-protocol:decode-octets octets 'google:string-value)))
     (ok (zerop (length octets)))
-    (ok (equal "" (or (ping.payload back) "")))))
+    (ok (equal "" (or (google:string-value.value back) "")))))
 
 (deftest serdes-octets
-  (let* ((protobuf-protocol:*protobuf-message-class* 'ping)
-         (msg (make-ping :payload "serdes"))
-         (octets (serdes-protocol:encode-to-octets msg :format :protobuf))
-         (back (serdes-protocol:decode-octets octets :format :protobuf)))
+  ;; serdes 0.2.0 encode-to-octets UTF-8s the payload; use encode/decode
+  ;; (octets) until 0.2.1 pass-through is published.
+  (let* ((protobuf-protocol:*protobuf-message-class* 'google:string-value)
+         (msg (google:make-string-value :value "serdes"))
+         (octets (serdes-protocol:encode msg :format :protobuf))
+         (back (serdes-protocol:decode octets :format :protobuf)))
     (ok (typep octets '(vector (unsigned-byte 8))))
-    (ok (equal "serdes" (ping.payload back)))))
+    (ok (equal "serdes" (google:string-value.value back)))))
 
 (deftest load-schema-rejects-proto
   (ok (signals (protobuf-protocol:load-schema #p"ping.proto")
@@ -39,11 +41,11 @@
 
 (deftest encode-to-stream-roundtrip
   (uiop:with-temporary-file (:pathname path :prefix "pb-live-")
-    (let ((msg (make-ping :payload "file")))
+    (let ((msg (google:make-string-value :value "file")))
       (with-open-file (out path :direction :output
                                 :element-type '(unsigned-byte 8)
                                 :if-exists :supersede)
         (protobuf-protocol:encode-message msg :stream out))
       (with-open-file (in path :direction :input :element-type '(unsigned-byte 8))
-        (let ((back (protobuf-protocol:decode-message in 'ping)))
-          (ok (equal "file" (ping.payload back))))))))
+        (let ((back (protobuf-protocol:decode-message in 'google:string-value)))
+          (ok (equal "file" (google:string-value.value back))))))))
