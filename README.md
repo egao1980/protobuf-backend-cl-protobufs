@@ -25,6 +25,8 @@ sbcl --load scripts/run-tests.lisp
 
 Pin with `CL_PROTOBUFS_VERSION` (default `2.0-rc1`; `:latest` extracts 0 files).
 
+Windows: `cl-protobufs` has no overlay (generated WKT + `protoc`). Encode/decode signal; `load-schema` still rejects `.proto`.
+
 CI: `setup-client` + `setup-roswell` + `scripts/ci-install.lisp` / `ci-test.lisp` (OCI only, no Quicklisp).
 
 ## License

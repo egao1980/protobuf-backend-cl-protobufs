@@ -3,7 +3,9 @@
   :description "egao1980/cl-protobufs backend for protobuf-protocol"
   :author "egao1980"
   :license "MIT"
-  :depends-on ("protobuf-protocol" "cl-protobufs" "uiop")
+  :depends-on ("protobuf-protocol" "uiop"
+               ;; Overlay (generated WKT + protoc) is linux/darwin only.
+               #-win32 "cl-protobufs")
   :serial t
   :pathname "src"
   :components ((:file "package")
