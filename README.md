@@ -26,7 +26,7 @@ sbcl --load scripts/run-tests.lisp
 Pin with `CL_PROTOBUFS_VERSION` (default `2.0-rc2`; `:latest` extracts 0 files).
 `load-schema` still rejects `.proto`.
 
-CI: `setup-client` + `setup-roswell` + `scripts/ci-install.lisp` / `ci-test.lisp` (OCI only, no Quicklisp).
+CI: canned [`cl-repository`](https://github.com/egao1980/cl-repository) (`test-system.yml` / `setup-client` + `ci`). Deps from `ghcr.io/egao1980/cl-systems`.
 
 ## License
 
