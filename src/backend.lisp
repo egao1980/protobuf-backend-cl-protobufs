@@ -9,6 +9,7 @@
   (let ((backend (make-cl-protobufs-backend)))
     (setf protobuf-protocol:*protobuf-backend* backend)
     (protobuf-protocol:use-protobuf-serdes-backend)
+    (protobuf-protocol:use-wkt-serdes-backend)
     backend))
 
 (defun %message-type (message-class)

@@ -11,8 +11,11 @@ over the workspace fork [`egao1980/cl-protobufs`](https://github.com/egao1980/cl
 (protobuf-protocol:decode-octets octets 'my-package:my-message)
 ```
 
-Loading the system sets `*protobuf-backend*` and registers serdes `:protobuf`.
-`load-schema` loads generated `.lisp` / ASDF systems — it does not run protoc.
+Loading the system sets `*protobuf-backend*` and registers serdes `:protobuf`
+and `:wkt`. `:wkt` is JSON-shaped Lisp as `google.protobuf.Value`
+(`lisp-to-wkt` / `encode-wkt`). Stream encode uses the same uint32-BE length
+prefix as `:protobuf`. `load-schema` loads generated `.lisp` / ASDF systems —
+it does not run protoc.
 
 Load **egao1980/cl-protobufs from GHCR via cl-repo**. WKT Lisp is vendored in
 the source layer (`2.0-rc2+`) — no `protoc` at load. Unix overlays still ship
