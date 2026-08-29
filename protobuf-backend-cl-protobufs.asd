@@ -1,14 +1,15 @@
 (defsystem "protobuf-backend-cl-protobufs"
-  :version "0.1.1"
+  :version "0.2.0"
   :description "egao1980/cl-protobufs backend for protobuf-protocol"
   :author "egao1980"
   :license "MIT"
-  :depends-on ("protobuf-protocol" "uiop" "cl-protobufs")
+  :depends-on ((:version "protobuf-protocol" "0.2.0") "uiop" "cl-protobufs")
   :properties (:cl-repo (:ci (:with ("dissect"))))
   :serial t
   :pathname "src"
   :components ((:file "package")
-               (:file "backend"))
+               (:file "backend")
+               (:file "wkt"))
   :in-order-to ((test-op (test-op "protobuf-backend-cl-protobufs/tests"))))
 
 (defsystem "protobuf-backend-cl-protobufs/tests"
