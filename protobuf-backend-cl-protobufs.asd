@@ -3,7 +3,7 @@
   :description "egao1980/cl-protobufs backend for protobuf-protocol"
   :author "egao1980"
   :license "MIT"
-  :depends-on ("protobuf-protocol" "uiop" "cl-protobufs")
+  :depends-on ((:version "protobuf-protocol" "0.2.0") "uiop" "cl-protobufs")
   :properties (:cl-repo (:ci (:with ("dissect"))))
   :serial t
   :pathname "src"
